@@ -1,0 +1,6 @@
+SpeechRecognition
+pyttsx3
+pyautogui
+pywhatkit
+google-generativeai
+pyaudio

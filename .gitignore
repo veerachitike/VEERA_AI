@@ -1,0 +1,14 @@
+venv/
+__pycache__/
+.env
+logs/
+screenshots/
+voices/
+backups/
+releases/
+
+*.pyc
+*.pyo
+*.pyd
+
+voice.mp3

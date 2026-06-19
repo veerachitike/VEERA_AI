@@ -1,0 +1,2 @@
+name=veera manohar
+my mother tongue=telugu

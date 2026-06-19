@@ -17,20 +17,50 @@ def load_memories():
 
             for line in file:
 
-                if "=" not in line:
+                line = line.strip()
+
+                if not line:
                     continue
 
-                key, value = line.strip().split(
-                    "=",
-                    1
-                )
+                if "=" in line:
+
+                    key, value = line.split(
+                        "=",
+                        1
+                    )
+
+                elif ":" in line:
+
+                    key, value = line.split(
+                        ":",
+                        1
+                    )
+
+                elif "-" in line:
+
+                    key, value = line.split(
+                        "-",
+                        1
+                    )
+
+                else:
+
+                    continue
 
                 memories[
                     key.strip().lower()
                 ] = value.strip()
 
     except FileNotFoundError:
+
         pass
+
+    except Exception as e:
+
+        print(
+            "Memory Load Error:",
+            e
+        )
 
     return memories
 
@@ -90,6 +120,21 @@ def list_memories():
         memories.items()
     )
 
+def search_memory(query):
+
+    memories = load_memories()
+
+    results = []
+
+    query = query.lower()
+
+    for k, v in memories.items():
+
+        if query in k.lower() or query in v.lower():
+
+            results.append((k, v))
+
+    return results
 
 def delete_memory(key):
 
@@ -116,6 +161,10 @@ def delete_memory(key):
                 file.write(
                     f"{k}={v}\n"
                 )
+
+        print(
+            f"DELETED -> {key}"
+        )
 
         return True
 

@@ -265,6 +265,76 @@ def memories():
         "memories": list_memories()
     })
 
+@app.route("/api/memory/add", methods=["POST"])
+def add_memory():
+
+    try:
+
+        data = request.get_json()
+
+        key = data.get("key", "").strip()
+        value = data.get("value", "").strip()
+
+        if not key or not value:
+
+            return jsonify({
+                "success": False,
+                "message": "Missing key or value"
+            }), 400
+
+        with open(
+            "memory.txt",
+            "a",
+            encoding="utf-8"
+        ) as file:
+
+            file.write(f"{key}={value}\n")
+
+        return jsonify({
+            "success": True
+        })
+    except Exception as e:
+
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500
+    
+@app.route("/api/memory/delete", methods=["POST"])
+def delete_memory_api():
+
+    try:
+
+        data = request.get_json()
+
+        key = data.get(
+            "key",
+            ""
+        ).strip()
+
+        if not key:
+
+            return jsonify({
+                "success": False
+            }), 400
+
+        from memory import delete_memory
+
+        success = delete_memory(key)
+
+        return jsonify({
+            "success": success
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+    
+    
+    
 @app.route("/api/screenshots")
 def screenshots():
 

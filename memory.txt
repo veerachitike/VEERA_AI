@@ -1,2 +1,3 @@
-name=veera manohar
+name=C Veera Manohar Reddy
 my mother tongue=telugu
+favorite_language=Python

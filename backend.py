@@ -299,7 +299,43 @@ def add_memory():
             "success": False,
             "message": str(e)
         }), 500
+
+@app.route("/api/memory/update", methods=["POST"])
+def update_memory():
+
+    try:
+
+        data = request.get_json()
+
+        key = data.get(
+            "key",
+            ""
+        ).strip()
+
+        value = data.get(
+            "value",
+            ""
+        ).strip()
+
+        from memory import save_memory
+
+        save_memory(
+            key,
+            value
+        )
+
+        return jsonify({
+            "success": True
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
     
+
 @app.route("/api/memory/delete", methods=["POST"])
 def delete_memory_api():
 

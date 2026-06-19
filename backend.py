@@ -7,7 +7,7 @@ from commands import processcommand
 from logger import log_command
 from weather import get_weather
 from dotenv import load_dotenv
-
+from flask import send_from_directory
 from memory import list_memories
 import requests
 
@@ -258,7 +258,6 @@ def history():
         })
     
 
-
 @app.route("/api/memories")
 def memories():
 
@@ -301,6 +300,13 @@ def screenshots():
             "screenshots": []
         })
     
+@app.route("/screenshots/<filename>")
+def serve_screenshot(filename):
+
+    return send_from_directory(
+        "screenshots",
+        filename
+    )
 
 # ─────────────────────────────────────────────
 # START SERVER

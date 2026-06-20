@@ -8,15 +8,30 @@ from logger import log_command
 from weather import get_weather
 from dotenv import load_dotenv
 from flask import send_from_directory
-from memory import list_memories
+from memory import (list_memories,save_memory,delete_memory,get_memory)
+from chat_history import (save_chat,get_history)
 import requests
-
 from ctypes import POINTER, cast
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 import pythoncom
+from rapidfuzz import fuzz
 
 load_dotenv()
+def similar(text, phrases, threshold=80):
+
+    for phrase in phrases:
+
+        score = fuzz.partial_ratio(
+            text.lower(),
+            phrase.lower()
+        )
+
+        if score >= threshold:
+
+            return True
+
+    return False
 
 app = Flask(__name__)
 CORS(app)
@@ -167,7 +182,155 @@ def chat():
         print(
             f"\nUSER: {user_input}"
         )
+        # ===================================
+        # MEMORY COMMANDS
+        # ===================================
 
+        text = user_input.lower()
+        # -----------------------------------
+        # WHAT DO YOU KNOW ABOUT ME
+        # -----------------------------------
+
+        if (
+            similar("what do you know about me")
+            or similar("tell me about me")
+            or similar("what do you remember about me")
+        ):
+
+            memories = list_memories()
+
+            if not memories:
+
+                return jsonify({
+                    "response":
+                    "I don't know anything about you yet."
+                })
+
+            response = "\n".join(
+                [
+                    f"{k}: {v}"
+                    for k, v in memories
+                ]
+            )
+
+            return jsonify({
+                "response": response
+            })
+
+        # -----------------------------------
+        # SHOW ALL MEMORIES
+        # -----------------------------------
+
+        if (
+            similar("show all memories")
+            or similar("show my memories")
+            or similar("list memories")
+            or similar("list my memories")
+        ):
+
+            memories = list_memories()
+
+            if not memories:
+
+                return jsonify({
+                    "response":
+                    "No memories stored."
+                })
+
+            response = "\n".join(
+                [
+                    f"{k}: {v}"
+                    for k, v in memories
+                ]
+            )
+
+            return jsonify({
+                "response": response
+            })
+
+        # -----------------------------------
+        # REMEMBER
+        # -----------------------------------
+
+        if (
+            text.startswith("remember")
+            or text.startswith("save this")
+            or text.startswith("store this")
+        ):
+
+            memory_text = (
+                user_input
+                .replace("remember", "")
+                .replace("save this", "")
+                .replace("store this", "")
+                .strip()
+            )
+
+            if " is " in memory_text:
+
+                key, value = memory_text.split(
+                    " is ",
+                    1
+                )
+
+                key = (
+                    key.strip()
+                    .lower()
+                    .replace("my ", "")
+                    .replace(" ", "_")
+                )
+
+                save_memory(
+                    key,
+                    value.strip()
+                )
+
+                return jsonify({
+                    "response":
+                    f"I've remembered that {key} is {value}."
+                })
+
+        # -----------------------------------
+        # FORGET
+        # -----------------------------------
+
+        if (
+            text.startswith("forget")
+            or text.startswith("delete memory")
+            or text.startswith("remove memory")
+        ):
+
+            memory_key = (
+                user_input
+                .replace("forget", "")
+                .replace("delete memory", "")
+                .replace("remove memory", "")
+                .strip()
+            )
+
+            memory_key = (
+                memory_key
+                .lower()
+                .replace("my ", "")
+                .replace("the ", "")
+                .replace(" ", "_")
+            )
+
+            success = delete_memory(
+                memory_key
+            )
+
+            if success:
+
+                return jsonify({
+                    "response":
+                    f"I've forgotten {memory_key}."
+                })
+
+            return jsonify({
+                "response":
+                f"I couldn't find {memory_key}."
+            })
         # -----------------------------
         # Command Processing
         # -----------------------------
@@ -182,18 +345,83 @@ def chat():
                 user_input,
                 result
             )
-
+            save_chat(
+                user_input,
+                str(result)
+            )
             return jsonify({
                 "response": str(result)
             })
+        # ===================================
+        # GENERIC MEMORY LOOKUP
+        # ===================================
 
+        best_match = None
+        best_score = 0
+
+        for key, value in list_memories():
+
+            readable_key = (
+                key.replace(
+                    "_",
+                    " "
+                )
+                .lower()
+            )
+
+            score = fuzz.partial_ratio(
+                text,
+                readable_key
+            )
+
+            if score > best_score:
+
+                best_score = score
+                best_match = (
+                    readable_key,
+                    value
+                )
+
+        if best_match and best_score >= 80:
+
+            key, value = best_match
+
+            return jsonify({
+                "response":
+                f"Your {key} is {value}."
+            })
         # -----------------------------
         # Gemini Fallback
         # -----------------------------
 
+        memories = list_memories()
+
+        memory_context = ""
+
+        for key, value in memories:
+            memory_context += (
+                f"{key}: {value}\n"
+            )
+        prompt = f"""
+        You are VEERA AI.
+
+        Memory Vault:
+
+        {memory_context}
+
+        Rules:
+
+        1. Use Memory Vault information whenever relevant.
+        2. Never invent information about the user.
+        3. If information is not present in memory, say you do not know.
+        4. Be concise and helpful.
+
+        User:
+        {user_input}
+        """
         response = client.models.generate_content(
             model="gemini-2.5-flash",
-            contents=user_input
+            contents=prompt
         )
 
         ai_response = (
@@ -206,7 +434,10 @@ def chat():
             user_input,
             ai_response
         )
-
+        save_chat(
+            user_input,
+            ai_response
+        )
         return jsonify({
             "response": ai_response
         })
@@ -221,7 +452,15 @@ def chat():
         return jsonify({
             "response": f"Error: {str(e)}"
         }), 500
-        
+
+@app.route("/api/chat-history")
+def chat_history():
+
+    return jsonify({
+        "history":
+        get_history()[::-1]
+    })
+
 @app.route("/api/weather")
 def weather():
 
@@ -282,13 +521,12 @@ def add_memory():
                 "message": "Missing key or value"
             }), 400
 
-        with open(
-            "memory.txt",
-            "a",
-            encoding="utf-8"
-        ) as file:
+        from memory import save_memory
 
-            file.write(f"{key}={value}\n")
+        save_memory(
+        key,
+        value
+        )
 
         return jsonify({
             "success": True

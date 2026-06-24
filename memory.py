@@ -3,6 +3,29 @@ import os
 MEMORY_FILE = "memory.txt"
 
 
+def normalize_key(key):
+
+    key = key.lower().strip()
+
+    # British → American spelling
+    key = key.replace(
+        "favourite",
+        "favorite"
+    )
+
+    # Underscores → spaces
+    key = key.replace(
+        "_",
+        " "
+    )
+
+    # Remove leading "my"
+    if key.startswith("my "):
+        key = key[3:]
+
+    return key
+
+
 def load_memories():
 
     memories = {}
@@ -48,7 +71,7 @@ def load_memories():
                     continue
 
                 memories[
-                    key.strip().lower()
+                    normalize_key(key)
                 ] = value.strip()
 
     except FileNotFoundError:
@@ -69,9 +92,9 @@ def save_memory(key, value):
 
     memories = load_memories()
 
-    memories[
-        key.strip().lower()
-    ] = value.strip()
+    key = normalize_key(key)
+
+    memories[key] = value.strip()
 
     try:
 
@@ -107,9 +130,9 @@ def get_memory(key):
 
     memories = load_memories()
 
-    return memories.get(
-        key.strip().lower()
-    )
+    key = normalize_key(key)
+
+    return memories.get(key)
 
 
 def list_memories():
@@ -120,27 +143,34 @@ def list_memories():
         memories.items()
     )
 
+
 def search_memory(query):
 
     memories = load_memories()
 
     results = []
 
-    query = query.lower()
+    query = normalize_key(query)
 
     for k, v in memories.items():
 
-        if query in k.lower() or query in v.lower():
+        if (
+            query in k.lower()
+            or query in v.lower()
+        ):
 
-            results.append((k, v))
+            results.append(
+                (k, v)
+            )
 
     return results
+
 
 def delete_memory(key):
 
     memories = load_memories()
 
-    key = key.strip().lower()
+    key = normalize_key(key)
 
     if key not in memories:
 

@@ -2,13 +2,39 @@ import os
 from rapidfuzz import fuzz
 from speech import speak
 
-
 APPS = {
-    "calculator": "calc",
-    "notepad": "notepad",
-    "chrome": "chrome",
-    "edge": "msedge",
-    "brave": "brave"
+    "calculator": "calc.exe",
+    "notepad": "notepad.exe",
+
+    "chrome": r"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Google Chrome.lnk",
+
+    "edge": "msedge.exe",
+
+    "brave": "brave.exe",
+
+    "vscode": os.path.expandvars(
+        r"%LOCALAPPDATA%\Programs\Microsoft VS Code\Code.exe"
+    ),
+
+    "spotify": os.path.expandvars(
+        r"%APPDATA%\Spotify\Spotify.exe"
+    )
+}
+APP_ALIASES = {
+    "browser": "chrome",
+    "internet": "chrome",
+    "web browser": "chrome",
+
+    "music": "spotify",
+    "songs": "spotify",
+
+    "code": "vscode",
+    "editor": "vscode",
+    "coding app": "vscode",
+    "visual studio": "vscode",
+
+    "videos": "youtube",
+    "youtube": "youtube"
 }
 
 CLOSE_APPS = {
@@ -33,7 +59,48 @@ def handle_apps(c):
 
     if any(word in c for word in ["open", "launch", "start"]):
 
-        # Direct Match
+        # ---------- ALIAS MATCH ----------
+
+        for alias, real_app in APP_ALIASES.items():
+
+            if alias in c:
+
+                if real_app in APPS:
+
+                    try:
+
+                        print(
+                            f"ALIAS MATCHED: {alias} -> {real_app}"
+                        )
+
+                        print(
+                            "OPENING:",
+                            APPS[real_app]
+                        )
+
+                        speak(
+                            f"Opening {real_app}"
+                        )
+
+                        os.startfile(
+                            APPS[real_app]
+                        )
+
+                        return f"Opening {real_app}"
+
+                    except Exception as e:
+
+                        print(
+                            "Open Error:",
+                            e
+                        )
+
+                        return (
+                            f"Failed to open "
+                            f"{real_app}"
+                        )
+
+        # ---------- DIRECT MATCH ----------
 
         for app, command in APPS.items():
 
@@ -41,23 +108,31 @@ def handle_apps(c):
 
                 try:
 
-                    print("MATCHED:", app)
-
-                    speak(f"Opening {app}")
-
-                    os.system(
-                        f"start {command}"
+                    print(
+                        "MATCHED:",
+                        app
                     )
+
+                    speak(
+                        f"Opening {app}"
+                    )
+
+                    os.startfile(command)
 
                     return f"Opening {app}"
 
                 except Exception as e:
 
-                    print("Open Error:", e)
+                    print(
+                        "Open Error:",
+                        e
+                    )
 
                     return f"Failed to open {app}"
 
         # Fuzzy Match
+
+        # ---------- FUZZY MATCH ----------
 
         best_app = None
         best_score = 0
@@ -82,20 +157,34 @@ def handle_apps(c):
 
             try:
 
-                speak(f"Opening {best_app}")
+                print(
+                    "FUZZY MATCH:",
+                    best_app
+                )
 
-                os.system(
-                    f"start {APPS[best_app]}"
+                print(
+                    "OPENING:",
+                    APPS[best_app]
+                )
+
+                speak(
+                    f"Opening {best_app}"
+                )
+
+                os.startfile(
+                    APPS[best_app]
                 )
 
                 return f"Opening {best_app}"
 
             except Exception as e:
 
-                print("Open Error:", e)
+                print(
+                    "Open Error:",
+                    e
+                )
 
                 return f"Failed to open {best_app}"
-
     # ---------- CLOSE APPS ----------
 
     for app, process in CLOSE_APPS.items():

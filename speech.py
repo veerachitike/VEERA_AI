@@ -4,7 +4,7 @@ import pygame
 import os
 import tempfile
 import threading
-
+import json
 
 VOICE = "en-US-JennyNeural"
 
@@ -148,11 +148,38 @@ def _run_speech(text):
 
 def speak(text):
 
+    try:
+
+        with open(
+            "settings.json",
+            "r",
+            encoding="utf-8"
+        ) as f:
+
+            settings = json.load(f)
+
+        if not settings.get(
+            "ttsEnabled",
+            True
+        ):
+
+            print(
+                f"VEERA (Muted): {text}"
+            )
+
+            return
+
+    except Exception as e:
+
+        print(
+            "Settings Read Error:",
+            e
+        )
+
     print(
         f"VEERA: {text}"
     )
 
-    # Run speech in background
     threading.Thread(
         target=_run_speech,
         args=(text,),

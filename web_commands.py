@@ -5,7 +5,6 @@ from speech import speak
 from weather import get_weather
 from config import sites
 
-
 def handle_web(c):
 
     c = c.lower().strip()
@@ -69,12 +68,27 @@ def handle_web(c):
 
         # Let app_commands handle apps
         APP_NAMES = [
-            "calculator",
-            "notepad",
-            "chrome",
-            "edge",
-            "brave"
-        ]
+        "calculator",
+        "notepad",
+        "chrome",
+        "edge",
+        "brave",
+        "browser",
+        "internet",
+        "music",
+        "songs",
+        "editor",
+        "code",
+        "coding app",
+        "visual studio",
+        "vscode",
+        "spotify",
+        "task manager",
+        "settings",
+        "control panel",
+        "downloads",
+        "documents",
+    ]
 
         if site in APP_NAMES:
             return False

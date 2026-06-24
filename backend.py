@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import (Flask,jsonify,request)
 from flask_cors import CORS
 import psutil
 import os
@@ -9,6 +9,7 @@ from weather import get_weather
 from dotenv import load_dotenv
 from flask import send_from_directory
 from memory import (list_memories,save_memory,delete_memory,get_memory)
+from memory_extractor import extract_memory
 from chat_history import (save_chat,get_history)
 import requests
 from ctypes import POINTER, cast
@@ -16,8 +17,35 @@ from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 import pythoncom
 from rapidfuzz import fuzz
+import json
+
 
 load_dotenv()
+def get_model():
+
+    try:
+
+        with open(
+            "settings.json",
+            "r",
+            encoding="utf-8"
+        ) as f:
+
+            settings = json.load(f)
+
+        return settings.get(
+            "model",
+            "gemini-2.5-flash"
+        )
+
+    except Exception as e:
+
+        print(
+            "Settings Read Error:",
+            e
+        )
+
+        return "gemini-2.5-flash"
 def similar(text, phrases, threshold=80):
 
     for phrase in phrases:
@@ -32,7 +60,31 @@ def similar(text, phrases, threshold=80):
             return True
 
     return False
+def memory_enabled():
 
+    try:
+
+        with open(
+            "settings.json",
+            "r",
+            encoding="utf-8"
+        ) as f:
+
+            settings = json.load(f)
+
+        return settings.get(
+            "memoryEnabled",
+            True
+        )
+
+    except Exception as e:
+
+        print(
+            "Settings Read Error:",
+            e
+        )
+
+        return True
 app = Flask(__name__)
 CORS(app)
 
@@ -173,6 +225,35 @@ def chat():
             ""
         ).strip()
 
+        # -----------------------------------
+        # AUTO MEMORY EXTRACTION
+        # -----------------------------------
+
+        try:
+
+            extracted = extract_memory(
+                user_input
+            )
+
+            if extracted and memory_enabled():
+
+                key, value = extracted
+
+                save_memory(
+                    key,
+                    value
+                )
+
+                print(
+                    f"MEMORY SAVED: {key} = {value}"
+                )
+
+        except Exception as e:
+
+            print(
+                "Memory Extraction Error:",
+                e
+            )
         if not user_input:
 
             return jsonify({
@@ -191,11 +272,15 @@ def chat():
         # WHAT DO YOU KNOW ABOUT ME
         # -----------------------------------
 
-        if (
-            similar("what do you know about me")
-            or similar("tell me about me")
-            or similar("what do you remember about me")
-        ):
+        if similar(
+                text,
+                [
+                    "what do you know about me",
+                    "tell me about me",
+                    "what do you remember about me",
+                    "who am i"
+                ]
+            ):
 
             memories = list_memories()
 
@@ -221,13 +306,15 @@ def chat():
         # SHOW ALL MEMORIES
         # -----------------------------------
 
-        if (
-            similar("show all memories")
-            or similar("show my memories")
-            or similar("list memories")
-            or similar("list my memories")
+        if similar(
+            text,
+            [
+                "show all memories",
+                "show my memories",
+                "list memories",
+                "list my memories"
+            ]
         ):
-
             memories = list_memories()
 
             if not memories:
@@ -279,6 +366,13 @@ def chat():
                     .replace("my ", "")
                     .replace(" ", "_")
                 )
+
+                if not memory_enabled():
+
+                    return jsonify({
+                        "response":
+                        "Memory system is disabled."
+                    })
 
                 save_memory(
                     key,
@@ -369,9 +463,9 @@ def chat():
                 .lower()
             )
 
-            score = fuzz.partial_ratio(
-                text,
-                readable_key
+            score = fuzz.token_set_ratio(
+            text,
+            readable_key
             )
 
             if score > best_score:
@@ -381,7 +475,13 @@ def chat():
                     readable_key,
                     value
                 )
+        print(
+            f"BEST MATCH: {best_match}"
+        )
 
+        print(
+            f"BEST SCORE: {best_score}"
+        )
         if best_match and best_score >= 80:
 
             key, value = best_match
@@ -399,9 +499,22 @@ def chat():
         memory_context = ""
 
         for key, value in memories:
+
             memory_context += (
                 f"{key}: {value}\n"
             )
+
+        history = get_history()
+
+        recent_history = ""
+
+        for item in history[-10:]:
+
+            recent_history += (
+                f"User: {item['user']}\n"
+                f"Assistant: {item['assistant']}\n"
+            )
+
         prompt = f"""
         You are VEERA AI.
 
@@ -409,25 +522,47 @@ def chat():
 
         {memory_context}
 
+        Recent Conversation:
+
+        {recent_history}
+
         Rules:
 
         1. Use Memory Vault information whenever relevant.
-        2. Never invent information about the user.
-        3. If information is not present in memory, say you do not know.
-        4. Be concise and helpful.
+        2. Use recent conversation context.
+        3. Never invent information.
+        4. If memory does not exist, say you do not know.
+        5. Be concise and helpful.
 
         User:
         {user_input}
         """
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt
-        )
+        model_name = get_model()
 
-        ai_response = (
-            response.text.strip()
-            if response.text
-            else "No response generated."
+        print(
+                f"Using Model: {model_name}"
+            )
+
+        try:
+
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt
+            )
+
+            ai_response = (
+                response.text.strip()
+                if response.text
+                else "No response generated."
+            )
+
+        except Exception as e:
+
+            ai_response = str(e)
+
+        print(
+            "Gemini Error:",
+            ai_response
         )
 
         log_command(
@@ -450,9 +585,8 @@ def chat():
         )
 
         return jsonify({
-            "response": f"Error: {str(e)}"
-        }), 500
-
+            "response": str(e)
+        })
 @app.route("/api/chat-history")
 def chat_history():
 
@@ -648,10 +782,65 @@ def screenshots():
 def serve_screenshot(filename):
 
     return send_from_directory(
-        "screenshots",
-        filename
+    "Screenshots",
+    filename
     )
 
+@app.route("/api/settings", methods=["GET"])
+def get_settings():
+
+    try:
+
+        with open(
+            "settings.json",
+            "r",
+            encoding="utf-8"
+        ) as f:
+
+            settings = json.load(f)
+
+        return jsonify(settings)
+
+    except Exception as e:
+
+        return jsonify(
+            {
+                "error": str(e)
+            }
+        ), 500
+    
+@app.route("/api/settings", methods=["POST"])
+def save_settings():
+
+    try:
+
+        data = request.json
+
+        with open(
+            "settings.json",
+            "w",
+            encoding="utf-8"
+        ) as f:
+
+            json.dump(
+                data,
+                f,
+                indent=4
+            )
+
+        return jsonify(
+            {
+                "success": True
+            }
+        )
+
+    except Exception as e:
+
+        return jsonify(
+            {
+                "error": str(e)
+            }
+        ), 500
 # ─────────────────────────────────────────────
 # START SERVER
 # ─────────────────────────────────────────────

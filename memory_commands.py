@@ -1,11 +1,13 @@
 from memory import (
     save_memory,
     get_memory,
-    list_memories
+    search_memory,
+    list_memories,
+    delete_memory
 )
 
 from speech import speak
-
+import json
 
 def handle_memory(c):
 
@@ -30,22 +32,30 @@ def handle_memory(c):
                 1
             )
 
-            ALIASES = {
-                "my name": "name",
-                "my favourite language": "favorite language",
-                "my favorite language": "favorite language"
-            }
+            with open(
+                "settings.json",
+                "r",
+                encoding="utf-8"
+            ) as f:
 
-            key = ALIASES.get(
-                key.strip().lower(),
-                key.strip().lower()
-            )
+                settings = json.load(f)
 
-            value = value.strip()
+            if not settings.get(
+                "memoryEnabled",
+                True
+            ):
+
+                message = (
+                    "Memory system is disabled"
+                )
+
+                speak(message)
+
+                return message
 
             save_memory(
                 key,
-                value
+                value.strip()
             )
 
             message = (
@@ -61,7 +71,7 @@ def handle_memory(c):
         except Exception:
 
             message = (
-                "Please use: remember that something is something"
+                "Please use: remember something is something"
             )
 
             speak(message)
@@ -77,17 +87,6 @@ def handle_memory(c):
             ""
         ).strip()
 
-        ALIASES = {
-            "my name": "name",
-            "my favorite language": "favorite language",
-            "my favourite language": "favorite language"
-        }
-
-        key = ALIASES.get(
-            key,
-            key
-        )
-
         value = get_memory(key)
 
         if value:
@@ -100,13 +99,73 @@ def handle_memory(c):
 
             return message
 
-        message = (
-            f"I do not know your {key} yet"
-        )
+        return False
+
+    # ---------- FORGET MEMORY ----------
+
+    if c.startswith("forget"):
+
+        key = c.replace(
+            "forget",
+            ""
+        ).strip()
+
+        success = delete_memory(key)
+
+        if success:
+
+            message = (
+                f"I forgot {key}"
+            )
+
+        else:
+
+            message = (
+                f"I do not know {key}"
+            )
 
         speak(message)
 
         return message
+
+    # ---------- SEARCH MEMORY ----------
+
+    if c.startswith("search memory"):
+
+        query = c.replace(
+            "search memory",
+            ""
+        ).strip()
+
+        results = search_memory(
+            query
+        )
+
+        if not results:
+
+            message = (
+                "No matching memories found"
+            )
+
+            speak(message)
+
+            return message
+
+        response = (
+            "I found these memories:\n\n"
+        )
+
+        for key, value in results:
+
+            response += (
+                f"• {key}: {value}\n"
+            )
+
+        speak(
+            "I found matching memories"
+        )
+
+        return response
 
     # ---------- WHO AM I ----------
 
@@ -134,7 +193,12 @@ def handle_memory(c):
 
     # ---------- LIST MEMORIES ----------
 
-    if "what do you know about me" in c:
+    if (
+        "what do you know about me" in c
+        or "what do you remember" in c
+        or "show memories" in c
+        or "list memories" in c
+    ):
 
         memories = list_memories()
 

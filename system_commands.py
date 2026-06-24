@@ -9,7 +9,7 @@ from system_info import (
 )
 
 PENDING_ACTION = None
-
+print("SYSTEM_COMMANDS FILE LOADED")
 
 def handle_system(c):
 
@@ -128,6 +128,70 @@ def handle_system(c):
         speak(message)
 
         return message
+    # ---------- TASK MANAGER ----------
+
+    if (
+    "task manager" in c
+    or "open task manager" in c):
+        message = "Opening Task Manager"
+
+        speak(message)
+
+        os.system("start taskmgr")
+
+        return message
+
+
+    # ---------- SETTINGS ----------
+
+    if (
+    "settings" in c
+    or "open settings" in c):
+
+        message = "Opening Settings"
+
+        speak(message)
+
+        os.system("start ms-settings:")
+
+        return message
+
+
+    # ---------- CONTROL PANEL ----------
+
+    if (
+    "control panel" in c
+    or "open control panel" in c):
+
+        message = "Opening Control Panel"
+
+        speak(message)
+
+        os.system("control")
+
+        return message
+    
+    if "open downloads" in c:
+
+        path = os.path.join(
+            os.path.expanduser("~"),
+            "Downloads"
+        )
+
+        os.startfile(path)
+
+        return "Opening Downloads folder"
+    
+    if "open documents" in c:
+
+        path = os.path.join(
+            os.path.expanduser("~"),
+            "Documents"
+        )
+
+        os.startfile(path)
+
+        return "Opening Documents folder"
 
     # ---------- BATTERY ----------
 

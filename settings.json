@@ -1,0 +1,19 @@
+{
+    "wakeWord": "Hey VEERA",
+    "language": "en-US",
+    "voiceEnabled": false,
+    "ttsEnabled": false,
+    "accentColor": "ice",
+    "particles": true,
+    "scanlines": false,
+    "animIntensity": "medium",
+    "model": "gemini-2.5-flash",
+    "temperature": 0.7,
+    "streaming": true,
+    "memoryEnabled": false,
+    "pythonUrl": "http://localhost:8000",
+    "refreshInterval": 2,
+    "notifications": true,
+    "desktopNotifs": false,
+    "sound": true
+}

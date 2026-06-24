@@ -1,3 +1,0 @@
-name=C Veera Manohar Reddy
-favorite_language=Python
-mother_tongue=Telugu

@@ -1,12 +1,14 @@
 import os
 from datetime import datetime
-
+import time
 import speech_recognition as sr
-
+import json
 from commands import processcommand
 from config import WAKE_WORDS, ACTIVE_TIMEOUT
 from speech import speak
+import commands
 
+print(commands.__file__)
 VERSION = "1.6"
 CHAT_MODE = False
 
@@ -43,13 +45,44 @@ with sr.Microphone() as source:
     duration=2
 )
 
+def voice_enabled():
 
+    try:
+
+        with open(
+            "settings.json",
+            "r",
+            encoding="utf-8"
+        ) as f:
+
+            settings = json.load(f)
+
+        return settings.get(
+            "voiceEnabled",
+            True
+        )
+
+    except Exception as e:
+
+        print(
+            "Settings Read Error:",
+            e
+        )
+
+        return True
 if __name__ == "__main__":
 
     r.energy_threshold = 300
     r.dynamic_energy_threshold = True
     r.pause_threshold = 1.2
     while True:
+        if not voice_enabled():
+            print(
+                "Voice Assistant Disabled"
+            )
+            time.sleep(2)
+            continue
+
         try:
             with sr.Microphone() as source:
                 print("Listening for wake word...")

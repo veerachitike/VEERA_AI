@@ -8,5 +8,260 @@
         "timestamp": "2026-06-20 10:43:41",
         "user": "What is my favorite language?",
         "response": "I do not know your my favorite language? yet"
+    },
+    {
+        "timestamp": "2026-06-22 15:48:28",
+        "user": "My favorite editor is VS Code",
+        "response": "VS Code is an excellent choice for a favorite editor! Its powerful features, vast extension marketplace, and strong community support make it incredibly versatile for various programming languages and development tasks. Many developers find it indispensable for its efficiency and user-friendly interface."
+    },
+    {
+        "timestamp": "2026-06-22 19:47:54",
+        "user": "launch brave",
+        "response": "Opening brave"
+    },
+    {
+        "timestamp": "2026-06-22 19:50:18",
+        "user": "What is my favourite editor?",
+        "response": "I do not know your my favourite editor? yet"
+    },
+    {
+        "timestamp": "2026-06-22 19:57:15",
+        "user": "open browser",
+        "response": "Opening browser"
+    },
+    {
+        "timestamp": "2026-06-22 19:57:42",
+        "user": "open browser",
+        "response": "Opening browser"
+    },
+    {
+        "timestamp": "2026-06-22 19:57:51",
+        "user": "open internet",
+        "response": "Opening internet"
+    },
+    {
+        "timestamp": "2026-06-22 19:58:01",
+        "user": "open internet",
+        "response": "Opening internet"
+    },
+    {
+        "timestamp": "2026-06-22 19:58:13",
+        "user": "open editor",
+        "response": "Opening editor"
+    },
+    {
+        "timestamp": "2026-06-22 20:02:18",
+        "user": "start chrome",
+        "response": "Opening chrome"
+    },
+    {
+        "timestamp": "2026-06-22 20:24:31",
+        "user": "open browser",
+        "response": "Opening browser"
+    },
+    {
+        "timestamp": "2026-06-22 20:25:02",
+        "user": "open editor",
+        "response": "Opening editor"
+    },
+    {
+        "timestamp": "2026-06-22 20:33:23",
+        "user": "open editor",
+        "response": "Opening vscode"
+    },
+    {
+        "timestamp": "2026-06-22 21:24:35",
+        "user": "open music",
+        "response": "Failed to open spotify"
+    },
+    {
+        "timestamp": "2026-06-22 21:24:49",
+        "user": "open browser",
+        "response": "Opening chrome"
+    },
+    {
+        "timestamp": "2026-06-22 21:30:05",
+        "user": "open task manager",
+        "response": "I am having trouble connecting to Gemini."
+    },
+    {
+        "timestamp": "2026-06-22 21:32:22",
+        "user": "open task manager",
+        "response": "I am having trouble connecting to Gemini."
+    },
+    {
+        "timestamp": "2026-06-22 21:32:58",
+        "user": "open task manager",
+        "response": "The quickest way to open Task Manager is by pressing `Ctrl + Shift + Esc`. Alternatively, right-click on an empty area of the Windows taskbar and select \"Task Manager\" from the context menu. You can also press `Ctrl + Alt + Del` and then choose \"Task Manager\" from the full-screen options."
+    },
+    {
+        "timestamp": "2026-06-22 21:36:14",
+        "user": "open task manager",
+        "response": "To open Task Manager, the quickest way is to press `Ctrl + Shift + Esc` simultaneously. Alternatively, you can press `Ctrl + Alt + Del` and then select \"Task Manager\" from the presented options screen. Another common method is to right-click an empty space on your Windows taskbar and choose \"Task Manager\" from the context menu."
+    },
+    {
+        "timestamp": "2026-06-22 21:38:43",
+        "user": "open task manager",
+        "response": "To open Task Manager, simply press **Ctrl + Shift + Esc** simultaneously. Alternatively, right-click on an empty space on your Windows taskbar and select \"Task Manager\" from the context menu. This tool allows you to monitor and manage running applications and processes."
+    },
+    {
+        "timestamp": "2026-06-22 21:43:54",
+        "user": "open task manager",
+        "response": "The quickest way to open Task Manager is by pressing **Ctrl+Shift+Esc**. Alternatively, right-click on an empty area of the Windows taskbar and select \"Task Manager\" from the context menu. You can also press **Ctrl+Alt+Del** and choose \"Task Manager\" from the options presented."
+    },
+    {
+        "timestamp": "2026-06-22 21:46:03",
+        "user": "open task manager",
+        "response": "The quickest way to open Task Manager is by pressing **Ctrl + Shift + Esc** simultaneously. Alternatively, press **Ctrl + Alt + Del** and then select \"Task Manager\" from the options screen. You can also right-click an empty area of the taskbar and choose \"Task Manager,\" or search for it in the Windows Start menu."
+    },
+    {
+        "timestamp": "2026-06-22 21:48:42",
+        "user": "open task manager",
+        "response": "Opening Task Manager"
+    },
+    {
+        "timestamp": "2026-06-22 21:49:27",
+        "user": "open control panel",
+        "response": "Opening Control Panel"
+    },
+    {
+        "timestamp": "2026-06-22 21:58:42",
+        "user": "what is my favourite browser",
+        "response": "I do not know your my favourite browser yet"
+    },
+    {
+        "timestamp": "2026-06-22 22:07:23",
+        "user": "what is my favourite browser\nwhat is my favorite browser\nwhat is favorite browser",
+        "response": "I do not know your my favourite browser\n my favorite browser\n favorite browser yet"
+    },
+    {
+        "timestamp": "2026-06-22 22:07:41",
+        "user": "what is my favourite browser",
+        "response": "I do not know your my favourite browser yet"
+    },
+    {
+        "timestamp": "2026-06-22 22:20:49",
+        "user": "what is my favourite browser",
+        "response": "Your my favourite browser is chrome"
+    },
+    {
+        "timestamp": "2026-06-22 22:32:25",
+        "user": "help",
+        "response": "\nVEERA COMMANDS\n\nAPPLICATIONS\n\u2022 Open Chrome\n\u2022 Open Edge\n\u2022 Open VS Code\n\u2022 Open Spotify\n\u2022 Close Apps\n\nSYSTEM\n\u2022 Battery Status\n\u2022 CPU Usage\n\u2022 RAM Usage\n\u2022 System Status\n\u2022 Open Task Manager\n\u2022 Open Settings\n\u2022 Open Downloads\n\nMEMORY\n\u2022 Remember ...\n\u2022 What is ...\n\u2022 Forget ...\n\u2022 Search Memory ...\n\u2022 List Memories\n\nWEB\n\u2022 Search ...\n\u2022 Open Website ...\n\u2022 Weather ...\n\nMEDIA\n\u2022 Play Music\n\u2022 Open YouTube\n"
+    },
+    {
+        "timestamp": "2026-06-22 22:32:59",
+        "user": "what can you do",
+        "response": "\nVEERA COMMANDS\n\nAPPLICATIONS\n\u2022 Open Chrome\n\u2022 Open Edge\n\u2022 Open VS Code\n\u2022 Open Spotify\n\u2022 Close Apps\n\nSYSTEM\n\u2022 Battery Status\n\u2022 CPU Usage\n\u2022 RAM Usage\n\u2022 System Status\n\u2022 Open Task Manager\n\u2022 Open Settings\n\u2022 Open Downloads\n\nMEMORY\n\u2022 Remember ...\n\u2022 What is ...\n\u2022 Forget ...\n\u2022 Search Memory ...\n\u2022 List Memories\n\nWEB\n\u2022 Search ...\n\u2022 Open Website ...\n\u2022 Weather ...\n\nMEDIA\n\u2022 Play Music\n\u2022 Open YouTube\n"
+    },
+    {
+        "timestamp": "2026-06-23 11:43:07",
+        "user": "take a screenshot",
+        "response": "Screenshot saved successfully.\nFile: screenshot_20260623_114307.png"
+    },
+    {
+        "timestamp": "2026-06-23 11:49:13",
+        "user": "read clipboard",
+        "response": "Clipboard contains: read clipboard"
+    },
+    {
+        "timestamp": "2026-06-23 11:49:46",
+        "user": "what is in my clipboard",
+        "response": "I do not know in my clipboard yet"
+    },
+    {
+        "timestamp": "2026-06-23 11:50:06",
+        "user": "show clipboard",
+        "response": "Clipboard contains: show clipboard"
+    },
+    {
+        "timestamp": "2026-06-23 11:50:18",
+        "user": "remember clipboard",
+        "response": "Please use: remember something is something"
+    },
+    {
+        "timestamp": "2026-06-23 11:54:23",
+        "user": "read  clipboard",
+        "response": "I am having trouble connecting to Gemini."
+    },
+    {
+        "timestamp": "2026-06-23 13:22:09",
+        "user": "help",
+        "response": "\nVEERA COMMANDS\n\nAPPLICATIONS\n\u2022 Open Chrome\n\u2022 Open Edge\n\u2022 Open VS Code\n\u2022 Open Spotify\n\u2022 Close Apps\n\nSYSTEM\n\u2022 Battery Status\n\u2022 CPU Usage\n\u2022 RAM Usage\n\u2022 System Status\n\u2022 Open Task Manager\n\u2022 Open Settings\n\u2022 Open Downloads\n\nMEMORY\n\u2022 Remember ...\n\u2022 What is ...\n\u2022 Forget ...\n\u2022 Search Memory ...\n\u2022 List Memories\n\nWEB\n\u2022 Search ...\n\u2022 Open Website ...\n\u2022 Weather ...\n\nMEDIA\n\u2022 Play Music\n\u2022 Open YouTube\n"
+    },
+    {
+        "timestamp": "2026-06-23 13:22:57",
+        "user": "read clip board",
+        "response": "I am having trouble connecting to Gemini."
+    },
+    {
+        "timestamp": "2026-06-23 13:34:45",
+        "user": "read clipboard",
+        "response": "Clipboard contains: import pyperclip\r\nfrom speech import speak\r\n\r\n\r\ndef handle_clipboard(c):\r\n\r\n    c = c.lower().strip()\r\n\r\n    # Normalize common variations\r\n\r\n    c = c.replace(\r\n        \"clip board\",\r\n        \"clipboard\"\r\n    )\r\n\r\n    # ---------- READ CLIPBOARD ----------\r\n\r\n    clipboard_words = [\r\n        \"clipboard\"\r\n    ]\r\n\r\n    read_words = [\r\n        \"read\",\r\n        \"show\",\r\n        \"display\",\r\n        \"check\",\r\n        \"view\",\r\n        \"what is in\",\r\n        \"what's in\"\r\n    ]\r\n\r\n    if (\r\n        any(\r\n            word in c\r\n            for word in clipboard_words\r\n        )\r\n        and\r\n        any(\r\n            word in c\r\n            for word in read_words\r\n        )\r\n    ):\r\n\r\n        try:\r\n\r\n            text = pyperclip.paste()\r\n\r\n            if not text:\r\n\r\n                message = (\r\n                    \"Clipboard is empty\"\r\n                )\r\n\r\n            else:\r\n\r\n                message = (\r\n                    f\"Clipboard contains: \"\r\n                    f\"{text}\"\r\n                )\r\n\r\n            speak(message)\r\n\r\n            return message\r\n\r\n        except Exception as e:\r\n\r\n            print(\r\n                \"Clipboard Error:\",\r\n                e\r\n            )\r\n\r\n            return (\r\n                \"Unable to access clipboard\"\r\n            )\r\n\r\n    # ---------- SAVE CLIPBOARD ----------\r\n\r\n    save_words = [\r\n        \"save\",\r\n        \"remember\",\r\n        \"store\"\r\n    ]\r\n\r\n    if (\r\n        \"clipboard\" in c\r\n        and\r\n        any(\r\n            word in c\r\n            for word in save_words\r\n        )\r\n    ):\r\n\r\n        try:\r\n\r\n            text = pyperclip.paste()\r\n\r\n            from memory import save_memory\r\n\r\n            save_memory(\r\n                \"clipboard\",\r\n                text\r\n            )\r\n\r\n            message = (\r\n                \"Clipboard saved to memory\"\r\n            )\r\n\r\n            speak(message)\r\n\r\n            return message\r\n\r\n        except Exception as e:\r\n\r\n            print(\r\n                \"Clipboard Save Error:\",\r\n                e\r\n            )\r\n\r\n            return (\r\n                \"Unable to save clipboard\"\r\n            )\r\n\r\n    return False"
+    },
+    {
+        "timestamp": "2026-06-23 13:35:13",
+        "user": "show clipboard",
+        "response": "Clipboard contains: import pyperclip\r\nfrom speech import speak\r\n\r\n\r\ndef handle_clipboard(c):\r\n\r\n    c = c.lower().strip()\r\n\r\n    # Normalize common variations\r\n\r\n    c = c.replace(\r\n        \"clip board\",\r\n        \"clipboard\"\r\n    )\r\n\r\n    # ---------- READ CLIPBOARD ----------\r\n\r\n    clipboard_words = [\r\n        \"clipboard\"\r\n    ]\r\n\r\n    read_words = [\r\n        \"read\",\r\n        \"show\",\r\n        \"display\",\r\n        \"check\",\r\n        \"view\",\r\n        \"what is in\",\r\n        \"what's in\"\r\n    ]\r\n\r\n    if (\r\n        any(\r\n            word in c\r\n            for word in clipboard_words\r\n        )\r\n        and\r\n        any(\r\n            word in c\r\n            for word in read_words\r\n        )\r\n    ):\r\n\r\n        try:\r\n\r\n            text = pyperclip.paste()\r\n\r\n            if not text:\r\n\r\n                message = (\r\n                    \"Clipboard is empty\"\r\n                )\r\n\r\n            else:\r\n\r\n                message = (\r\n                    f\"Clipboard contains: \"\r\n                    f\"{text}\"\r\n                )\r\n\r\n            speak(message)\r\n\r\n            return message\r\n\r\n        except Exception as e:\r\n\r\n            print(\r\n                \"Clipboard Error:\",\r\n                e\r\n            )\r\n\r\n            return (\r\n                \"Unable to access clipboard\"\r\n            )\r\n\r\n    # ---------- SAVE CLIPBOARD ----------\r\n\r\n    save_words = [\r\n        \"save\",\r\n        \"remember\",\r\n        \"store\"\r\n    ]\r\n\r\n    if (\r\n        \"clipboard\" in c\r\n        and\r\n        any(\r\n            word in c\r\n            for word in save_words\r\n        )\r\n    ):\r\n\r\n        try:\r\n\r\n            text = pyperclip.paste()\r\n\r\n            from memory import save_memory\r\n\r\n            save_memory(\r\n                \"clipboard\",\r\n                text\r\n            )\r\n\r\n            message = (\r\n                \"Clipboard saved to memory\"\r\n            )\r\n\r\n            speak(message)\r\n\r\n            return message\r\n\r\n        except Exception as e:\r\n\r\n            print(\r\n                \"Clipboard Save Error:\",\r\n                e\r\n            )\r\n\r\n            return (\r\n                \"Unable to save clipboard\"\r\n            )\r\n\r\n    return False"
+    },
+    {
+        "timestamp": "2026-06-23 13:41:44",
+        "user": "show history",
+        "response": "I am having trouble connecting to Gemini."
+    },
+    {
+        "timestamp": "2026-06-23 19:10:49",
+        "user": "show clip board",
+        "response": "Clipboard contains: http://localhost:3000"
+    },
+    {
+        "timestamp": "2026-06-23 19:15:13",
+        "user": "dashboard",
+        "response": "A dashboard is a visual display of key information and metrics, often presented through charts, graphs, and tables. Its primary purpose is to provide a quick, at-a-glance overview of performance, trends, or operational status. Dashboards consolidate data from various sources, enabling users to monitor progress, identify issues, and make informed decisions efficiently."
+    },
+    {
+        "timestamp": "2026-06-23 22:08:04",
+        "user": "open chrome",
+        "response": "Opening chrome"
+    },
+    {
+        "timestamp": "2026-06-24 17:39:15",
+        "user": "what is python",
+        "response": "I do not know python yet"
+    },
+    {
+        "timestamp": "2026-06-24 17:40:22",
+        "user": "who invented python",
+        "response": "I have reached my Gemini usage limit. Please try again later."
+    },
+    {
+        "timestamp": "2026-06-24 17:44:54",
+        "user": "what is python",
+        "response": "I do not know python yet"
+    },
+    {
+        "timestamp": "2026-06-24 17:45:32",
+        "user": "who invented python",
+        "response": "I have reached my Gemini usage limit. Please try again later."
+    },
+    {
+        "timestamp": "2026-06-24 17:51:13",
+        "user": "who invented python",
+        "response": "I am having trouble connecting to Gemini."
+    },
+    {
+        "timestamp": "2026-06-24 18:13:33",
+        "user": "what is python",
+        "response": "I do not know python yet"
+    },
+    {
+        "timestamp": "2026-06-24 19:12:20",
+        "user": "what is python",
+        "response": "503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+    },
+    {
+        "timestamp": "2026-06-24 19:18:30",
+        "user": "what is python",
+        "response": "Gemini servers are currently busy. Please try again in a few moments."
     }
 ]

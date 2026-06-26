@@ -7,7 +7,7 @@ from commands import processcommand
 from config import WAKE_WORDS, ACTIVE_TIMEOUT
 from speech import speak
 import commands
-
+from notifications import notify
 print(commands.__file__)
 VERSION = "1.6"
 CHAT_MODE = False
@@ -32,7 +32,10 @@ def startup_check():
     print("Folders OK")
 
     speak("System ready")
-
+    notify(
+    "VEERA AI",
+    "System Initializing"
+    )
 startup_check()
 
 r = sr.Recognizer()

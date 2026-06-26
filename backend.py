@@ -1,4 +1,5 @@
 from flask import (Flask,jsonify,request)
+from werkzeug.utils import secure_filename
 from flask_cors import CORS
 import psutil
 import os
@@ -18,8 +19,13 @@ from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 import pythoncom
 from rapidfuzz import fuzz
 import json
+from notifications import notify
+from pypdf import PdfReader
+from docx import Document
+from ai import analyze_document
+from speech import speak
 
-
+DOCUMENTS = {}
 load_dotenv()
 def get_model():
 
@@ -85,6 +91,13 @@ def memory_enabled():
         )
 
         return True
+    
+UPLOAD_FOLDER = "uploads"
+
+os.makedirs(
+    UPLOAD_FOLDER,
+    exist_ok=True
+)
 app = Flask(__name__)
 CORS(app)
 
@@ -203,6 +216,27 @@ def chat():
 
         data = request.get_json()
 
+        conversation_id = data.get(
+            "conversationId",
+            "default"
+        )
+
+        print("=" * 60)
+        print("CONVERSATION:", conversation_id)
+        print("HAS DOCUMENT:", data.get("hasDocument"))
+        print("DOCUMENT NAME:", data.get("documentName"))
+        print("=" * 60)
+
+        has_document = data.get(
+            "hasDocument",
+            False
+        )
+
+        document_name = data.get(
+            "documentName",
+            ""
+        )
+
         if not data:
 
             return jsonify({
@@ -243,7 +277,10 @@ def chat():
                     key,
                     value
                 )
-
+                notify(
+                    "VEERA Memory",
+                    f"Saved: {key}"
+                )
                 print(
                     f"MEMORY SAVED: {key} = {value}"
                 )
@@ -254,12 +291,18 @@ def chat():
                 "Memory Extraction Error:",
                 e
             )
-        if not user_input:
+        if not user_input and not has_document:
 
             return jsonify({
                 "response": "Empty message."
             }), 400
 
+        if not user_input and has_document:
+
+            user_input = (
+                f"Analyze the uploaded document "
+                f"'{document_name}'."
+            )
         print(
             f"\nUSER: {user_input}"
         )
@@ -428,24 +471,39 @@ def chat():
         # -----------------------------
         # Command Processing
         # -----------------------------
+        desktop_commands = [
+            "open",
+            "close",
+            "launch",
+            "start",
+            "shutdown",
+            "restart",
+            "mute",
+            "volume",
+            "screenshot",
+            "clipboard",
+        ]
 
-        result = processcommand(
-            user_input
-        )
+        if any(user_input.lower().startswith(cmd)for cmd in desktop_commands):
 
-        if result:
+            result = processcommand(user_input)
 
-            log_command(
-                user_input,
-                result
-            )
-            save_chat(
-                user_input,
-                str(result)
-            )
-            return jsonify({
-                "response": str(result)
-            })
+            if result:
+
+                log_command(
+                    user_input,
+                    result
+                )
+
+                save_chat(
+                    conversation_id,
+                    user_input,
+                    str(result)
+                )
+
+                return jsonify({
+                    "response": str(result)
+                })
         # ===================================
         # GENERIC MEMORY LOOKUP
         # ===================================
@@ -504,19 +562,57 @@ def chat():
                 f"{key}: {value}\n"
             )
 
-        history = get_history()
+        recent_history = ""     
+        # -----------------------------
+        # Document Context
+        # -----------------------------
 
-        recent_history = ""
+        document_context = ""
 
-        for item in history[-10:]:
+        document = DOCUMENTS.get(
+            conversation_id,
+            {}
+        )
 
-            recent_history += (
-                f"User: {item['user']}\n"
-                f"Assistant: {item['assistant']}\n"
-            )
+        if document:
+
+            document_context = f"""
+        ========================
+        UPLOADED DOCUMENT
+        ========================
+
+        File Name:
+        {document.get("name", "")}
+
+        The user has uploaded this document.
+
+        Use this document ONLY if the user's request refers to:
+        - this
+        - this document
+        - this file
+        - summarize
+        - analyze
+        - explain
+        - brief
+        - extract
+        - key points
+
+        If the user's request is unrelated, ignore this document completely.
+
+        DOCUMENT CONTENT:
+
+        {document.get("content", "")[:12000]}
+
+        ========================
+        END OF DOCUMENT
+        ========================
+        """
+        # -----------------------------
+        # Prompt
+        # -----------------------------
 
         prompt = f"""
-        You are VEERA AI.
+        You are VEERA AI, an intelligent desktop assistant.
 
         Memory Vault:
 
@@ -526,22 +622,35 @@ def chat():
 
         {recent_history}
 
-        Rules:
+        {document_context}
 
-        1. Use Memory Vault information whenever relevant.
-        2. Use recent conversation context.
-        3. Never invent information.
-        4. If memory does not exist, say you do not know.
-        5. Be concise and helpful.
+        Instructions:
 
-        User:
+        1. Use Memory Vault only when relevant.
+        2. Use recent conversation only when relevant.
+        3. Use the uploaded document ONLY if it appears above.
+        4. If no document appears above, ignore any previous uploaded documents.
+        5. Never assume a document exists.
+        6. Be concise, accurate and helpful.
+
+        User Request:
         {user_input}
+
+        Assistant:
         """
+
         model_name = get_model()
 
-        print(
-                f"Using Model: {model_name}"
-            )
+
+
+        print(f"Using Model: {model_name}")
+
+        print("=" * 80)
+        print("CONVERSATION:", conversation_id)
+        print("HAS DOCUMENT:", has_document)
+        print("DOCUMENT NAME:", document.get("name", "None"))
+        print("DOCUMENT LENGTH:", len(document.get("content", "")))
+        print("=" * 80)
 
         try:
 
@@ -555,21 +664,22 @@ def chat():
                 if response.text
                 else "No response generated."
             )
-
+            speak(ai_response[:300])
         except Exception as e:
 
-            ai_response = str(e)
+            print("Gemini Error:", e)
 
-        print(
-            "Gemini Error:",
-            ai_response
-        )
+            ai_response = (
+                f"Gemini Error: {str(e)}"
+            )
 
         log_command(
             user_input,
             ai_response
         )
+
         save_chat(
+            conversation_id,
             user_input,
             ai_response
         )
@@ -580,13 +690,14 @@ def chat():
     except Exception as e:
 
         print(
-            "Backend Error:",
-            e
-        )
+                "Backend Error:",
+                e
+            )
 
         return jsonify({
-            "response": str(e)
-        })
+                "response": str(e)
+            }), 500
+    
 @app.route("/api/chat-history")
 def chat_history():
 
@@ -808,6 +919,163 @@ def get_settings():
                 "error": str(e)
             }
         ), 500
+
+@app.route(
+    "/api/upload",
+    methods=["POST"]
+)
+def upload_file():
+
+    global DOCUMENTS
+
+    try:
+
+        if "file" not in request.files:
+
+            return jsonify({
+                "error":
+                "No file uploaded"
+            }), 400
+
+        file = request.files["file"]
+
+        if file.filename == "":
+
+            return jsonify({
+                "error":
+                "No file selected"
+            }), 400
+
+        filename = secure_filename(
+            file.filename
+        )
+
+        filepath = os.path.join(
+            UPLOAD_FOLDER,
+            filename
+        )
+
+        file.save(filepath)
+
+        notify(
+            "VEERA Upload",
+            filename
+        )
+
+        content = ""
+
+        try:
+
+            # TXT
+
+            if filename.lower().endswith(
+                ".txt"
+            ):
+
+                with open(
+                    filepath,
+                    "r",
+                    encoding="utf-8"
+                ) as f:
+
+                    content = f.read()
+
+            # PDF
+
+            elif filename.lower().endswith(
+                ".pdf"
+            ):
+
+                reader = PdfReader(
+                    filepath
+                )
+
+                pages = []
+
+                for page in reader.pages:
+
+                    text = page.extract_text()
+
+                    if text:
+
+                        pages.append(text)
+
+                content = "\n".join(
+                    pages
+                )
+
+            # DOCX
+
+            elif filename.lower().endswith(
+                ".docx"
+            ):
+
+                doc = Document(
+                    filepath
+                )
+
+                paragraphs = []
+
+                for para in doc.paragraphs:
+
+                    paragraphs.append(
+                        para.text
+                    )
+
+                content = "\n".join(
+                    paragraphs
+                )
+
+            else:
+
+                content = (
+                    "Unsupported file type."
+                )
+
+        except Exception as e:
+
+            content = (
+                f"Read Error: {str(e)}"
+            )
+
+        # Save document globally
+
+        conversation_id = request.form.get(
+            "conversationId",
+            "default"
+        )
+
+        DOCUMENTS[conversation_id] = {
+            "name": filename,
+            "content": content
+        }
+
+        print("=" * 50)
+        print("DOCUMENT STORED")
+        print("Conversation:", conversation_id)
+        print("File:", filename)
+        print("Length:", len(content))
+        print("=" * 50)
+
+        return jsonify({
+
+            "success": True,
+
+            "filename": filename,
+
+            "message": "Document uploaded successfully."
+
+        })
+
+    except Exception as e:
+
+        return jsonify({
+
+                "success": False,
+
+                "error": str(e)
+
+            }), 500
     
 @app.route("/api/settings", methods=["POST"])
 def save_settings():

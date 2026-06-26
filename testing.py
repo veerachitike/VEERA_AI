@@ -1,7 +1,8 @@
-# test_media.py
+from notifications import notify
 
-import pyautogui
+notify(
+    "VEERA AI",
+    "Notification system online"
+)
 
-print("Sending next track")
-
-pyautogui.press("nexttrack")
+input("Press Enter...")

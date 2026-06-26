@@ -8,7 +8,7 @@ from memory import (
 
 from speech import speak
 import json
-
+from notifications import notify
 def handle_memory(c):
 
     c = c.lower().strip()
@@ -57,7 +57,10 @@ def handle_memory(c):
                 key,
                 value.strip()
             )
-
+            notify(
+                "VEERA Memory",
+                f"Saved: {key}"
+            )
             message = (
                 f"Memory saved: {key} = {value}"
             )

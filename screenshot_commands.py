@@ -2,6 +2,7 @@ import os
 import pyautogui
 from datetime import datetime
 from speech import speak
+from notifications import notify
 
 
 def handle_screenshot(c):
@@ -27,8 +28,13 @@ def handle_screenshot(c):
             filename
         )
 
+        notify(
+            "VEERA Screenshot",
+            "Screenshot saved successfully"
+        )
+
         message = (
-            f"Screenshot saved"
+            "Screenshot saved"
         )
 
         speak(message)

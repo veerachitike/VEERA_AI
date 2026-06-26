@@ -1,0 +1,7 @@
+Python is a programming language.
+
+Variables store data.
+
+Functions allow code reuse.
+
+Lists store multiple values.

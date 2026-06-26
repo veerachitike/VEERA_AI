@@ -5,9 +5,14 @@ from datetime import datetime
 HISTORY_FILE = "data/chat_history.json"
 
 
-def save_chat(user, response):
+def save_chat(conversation_id, user, response):
 
     try:
+
+        os.makedirs(
+            os.path.dirname(HISTORY_FILE),
+            exist_ok=True
+        )
 
         if os.path.exists(HISTORY_FILE):
 
@@ -17,13 +22,29 @@ def save_chat(user, response):
                 encoding="utf-8"
             ) as f:
 
-                history = json.load(f)
+                try:
+
+                    history = json.load(f)
+
+                except json.JSONDecodeError:
+
+                    history = {}
 
         else:
 
-            history = []
+            history = {}
 
-        history.append({
+        # Convert old history format to new format
+        if isinstance(history, list):
+
+            history = {}
+
+        history.setdefault(
+            conversation_id,
+            []
+        )
+
+        history[conversation_id].append({
 
             "timestamp":
             datetime.now().strftime(
@@ -35,6 +56,7 @@ def save_chat(user, response):
 
             "response":
             response
+
         })
 
         with open(
@@ -46,7 +68,8 @@ def save_chat(user, response):
             json.dump(
                 history,
                 f,
-                indent=4
+                indent=4,
+                ensure_ascii=False
             )
 
     except Exception as e:
@@ -57,9 +80,13 @@ def save_chat(user, response):
         )
 
 
-def get_history():
+def get_history(conversation_id):
 
     try:
+
+        if not os.path.exists(HISTORY_FILE):
+
+            return []
 
         with open(
             HISTORY_FILE,
@@ -67,8 +94,22 @@ def get_history():
             encoding="utf-8"
         ) as f:
 
-            return json.load(f)
+            history = json.load(f)
 
-    except:
+        if isinstance(history, list):
+
+            return []
+
+        return history.get(
+            conversation_id,
+            []
+        )
+
+    except Exception as e:
+
+        print(
+            "History Read Error:",
+            e
+        )
 
         return []

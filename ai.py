@@ -3,6 +3,7 @@ import os
 import json
 from google import genai
 from dotenv import load_dotenv
+from notifications import notify
 
 load_dotenv()
 
@@ -35,7 +36,6 @@ def get_model():
         )
 
         return "gemini-2.5-flash"
-    
 
 def ask_ai(prompt):
 
@@ -86,12 +86,22 @@ def ask_ai(prompt):
 
         if "503" in error:
 
+            notify(
+                    "VEERA AI",
+                    "Gemini servers are busy"
+                )
+
             return (
                 "Gemini servers are currently busy. "
                 "Please try again in a few moments."
             )
 
         if "429" in error:
+
+            notify(
+                "VEERA AI",
+                "Gemini quota exceeded"
+            )
 
             return (
                 "Gemini quota exceeded. "
@@ -100,10 +110,92 @@ def ask_ai(prompt):
 
         if "401" in error:
 
+            notify(
+                "VEERA AI",
+                "Invalid API key"
+            )
+
             return (
                 "Gemini API key is invalid."
             )
 
+        notify(
+            "VEERA AI",
+            "An unexpected AI error occurred"
+        )
+
         return (
             f"Gemini Error: {error[:200]}"
+        )
+    
+def analyze_document(content):
+
+    prompt = f"""
+    You are VEERA AI.
+
+    Analyze the following document.
+
+    Return ONLY:
+
+    📄 Summary
+
+    🔑 Key Points
+
+    💡 Important Insights
+
+    Keep the response concise,
+    professional, and easy to read.
+
+    Document:
+
+    {content[:10000]}
+    """
+
+    try:
+
+        response = client.models.generate_content(
+            model=get_model(),
+            contents=prompt
+        )
+
+        if response.text:
+
+            return response.text.strip()
+
+        return (
+            "⚠ No analysis was generated."
+        )
+
+    except Exception as e:
+
+        error = str(e)
+
+        print(
+            "Analyze Document Error:",
+            error
+        )
+
+        if "503" in error:
+
+            return (
+                "⚠ Gemini servers are currently busy.\n\n"
+                "The document was uploaded successfully, "
+                "but AI analysis is temporarily unavailable."
+            )
+
+        if "429" in error:
+
+            return (
+                "⚠ Gemini quota exceeded.\n\n"
+                "Please try again later."
+            )
+
+        if "401" in error:
+
+            return (
+                "⚠ Invalid Gemini API key."
+            )
+
+        return (
+            f"⚠ Analysis Error:\n{error[:200]}"
         )
